@@ -67,7 +67,7 @@ internal sealed class AnaPencere : Form
 
     public AnaPencere()
     {
-        Text = "Vanta Rust Control Suite";
+        Text = "MADE BY IF ELSE";
         ClientSize = new Size(900, 620);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -92,7 +92,7 @@ internal sealed class AnaPencere : Form
 
         var lblTitle = new Label
         {
-            Text = "VANTA RUST RECOIL CONTROL",
+            Text = "RUST RECOIL CONTROL",
             Location = new Point(30, 25),
             Size = new Size(400, 35),
             ForeColor = Color.Cyan,
