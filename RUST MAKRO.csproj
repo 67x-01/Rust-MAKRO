@@ -8,10 +8,11 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
+
   <ItemGroup>
-  <Content Include="arka plan.png">
-  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </Content>
+    <Content Include="arka_plan.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

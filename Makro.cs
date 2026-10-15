@@ -1,65 +1,72 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace RustMakro
 {
     public static class Makro
     {
-        [DllImport("user32.dll")]
-        private static extern bool SetCursorPos(int X, int Y);
-
-        [DllImport("user32.dll")]
-        private static extern bool GetCursorPos(out Point lpPoint);
-
-        [DllImport("user32.dll")]
-        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, UIntPtr dwExtraInfo);
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MOUSEINPUT
+        {
+            public int dx;
+            public int dy;
+            public uint mouseData;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct Point
+        private struct INPUT
         {
-            public int X;
-            public int Y;
+            public uint type;
+            public MOUSEINPUT mi;
         }
 
+        private const uint INPUT_MOUSE = 0;
+        private const uint MOUSEEVENTF_MOVE = 0x0001;
         public const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
         public const uint MOUSEEVENTF_LEFTUP = 0x0004;
-        public const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
-        public const uint MOUSEEVENTF_RIGHTUP = 0x0010;
 
-        public static void MouseAsagiGit(int piksel = 10)
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
+
+        private static readonly Random Rnd = new Random();
+
+        public static void MoveSmooth(double x, double y, bool randomize = true)
         {
-            GetCursorPos(out Point konum);
-            SetCursorPos(konum.X, konum.Y + piksel);
+            int finalX = (int)Math.Round(x);
+            int finalY = (int)Math.Round(y);
+
+            if (randomize)
+            {
+                // Anti-Cheat bypass için mikro sapmalar (humanizer)
+                finalX += Rnd.Next(-1, 2);
+                finalY += Rnd.Next(-1, 2);
+            }
+
+            INPUT[] inputs = new INPUT[1];
+            inputs[0].type = INPUT_MOUSE;
+            inputs[0].mi.dx = finalX;
+            inputs[0].mi.dy = finalY;
+            inputs[0].mi.dwFlags = MOUSEEVENTF_MOVE;
+            inputs[0].mi.time = 0;
+            inputs[0].mi.dwExtraInfo = IntPtr.Zero;
+
+            SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
         }
 
-        public static void MouseYukariGit(int piksel = 10)
+        public static bool IsLeftMouseButtonDown()
         {
-            GetCursorPos(out Point konum);
-            SetCursorPos(konum.X, konum.Y - piksel);
+            // Win32 GetAsyncKeyState ile sol tık kontrolü (0x01 = VK_LBUTTON)
+            return (NativeMethods.GetAsyncKeyState(0x01) & 0x8000) != 0;
         }
+    }
 
-        public static void MouseSagaGit(int piksel = 10)
-        {
-            GetCursorPos(out Point konum);
-            SetCursorPos(konum.X + piksel, konum.Y);
-        }
-
-        public static void MouseSolaGit(int piksel = 10)
-        {
-            GetCursorPos(out Point konum);
-            SetCursorPos(konum.X - piksel, konum.Y);
-        }
-
-        public static void SolTiklama()
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
-        }
-
-        public static void SagTiklama()
-        {
-            mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, UIntPtr.Zero);
-            mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, UIntPtr.Zero);
-        }
+    internal static class NativeMethods
+    {
+        [DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(int vKey);
     }
 }
