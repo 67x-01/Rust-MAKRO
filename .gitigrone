@@ -1,5 +1,22 @@
-bin/
-obj/
+# Visual Studio / IDE Dosyaları
 .vs/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+
+# Derleme (Build) Çıktıları
+bin/
+obj/
+publish/
+
+# Log ve Geçici Dosyalar
+vanta_dump.txt
+*.log
+
+# İşletim Sistemi Artıkları
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
